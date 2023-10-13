@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { auth } from './firebase'; // Importing auth directly
 const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSignup = () => {
-    // Simple validation check
-    if (password !== confirmPassword) {
-      alert('Passwords do not match!');
-      return;
-    }
-
-    // Handle signup logic here, like calling an API to register the user
-    console.log('Email:', email, 'Password:', password);
-  };
+  const handleSignUp = () => {
+    auth.createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      var user = userCredential.user;
+      // Maybe navigate to another screen or show a success message
+      Alert.alert("Account created")
+    })
+    .catch(error => {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      Alert.alert(errorMessage);
+    });
+  }
 
   return (
     <View style={styles.container}>
@@ -33,14 +35,7 @@ const SignupPage = () => {
         secureTextEntry 
         style={styles.input} 
       />
-      <TextInput 
-        value={confirmPassword} 
-        onChangeText={setConfirmPassword} 
-        placeholder="Confirm Password" 
-        secureTextEntry 
-        style={styles.input} 
-      />
-      <Button title="Signup" onPress={handleSignup} />
+      <Button title="Signup" onPress={handleSignUp} />
     </View>
   );
 };

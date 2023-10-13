@@ -1,13 +1,29 @@
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/core'
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { auth } from './firebase';
+import HomeScreen from './HomeScreen';
 
 const LoginPage = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Handle login logic here
-    console.log('Email:', email, 'Password:', password);
+    auth.signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      var user = userCredential.user;
+      if (user) {
+        navigation.navigate('HomeScreen');
+      } else {
+        Alert.alert("Login Error", "Invalid user data received. Please try again.");
+      }
+    })
+    .catch((error) => {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        Alert.alert("Login Error", errorMessage);
+     });
+     
   };
 
   return (
