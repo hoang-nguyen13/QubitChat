@@ -6,18 +6,27 @@ const SignupPage = () => {
   const [password, setPassword] = useState('');
 
   const handleSignUp = () => {
-    auth.createUserWithEmailAndPassword(email, password)
+    auth
+    .createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
-      var user = userCredential.user;
-      // Maybe navigate to another screen or show a success message
-      Alert.alert("Account created")
+      const user = userCredential.user;
+      
+      if (user) {
+        user.sendEmailVerification()
+        .then(() => {
+          Alert.alert("Account created", "Please verify your email.");
+        })
+        .catch(verificationError => {
+          // Handle any errors that occur during the email verification process
+          Alert.alert("Verification email send error", verificationError.message);
+        });
+      }
     })
     .catch(error => {
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      Alert.alert(errorMessage);
+      Alert.alert("Signup error", error.message);
     });
-  }
+}
+
 
   return (
     <View style={styles.container}>
@@ -26,7 +35,8 @@ const SignupPage = () => {
         value={email} 
         onChangeText={setEmail} 
         placeholder="Email" 
-        style={styles.input} 
+        style={styles.input}
+        autoCapitalize="none" 
       />
       <TextInput 
         value={password} 
