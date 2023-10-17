@@ -1,49 +1,56 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { auth } from './firebase'; // Importing auth directly
+import { auth, writeUserData } from './firebase';
+
 const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSignUp = () => {
     auth
-    .createUserWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      
-      if (user) {
-        user.sendEmailVerification()
-        .then(() => {
-          Alert.alert("Account created", "Please verify your email.");
-        })
-        .catch(verificationError => {
-          // Handle any errors that occur during the email verification process
-          Alert.alert("Verification email send error", verificationError.message);
-        });
-      }
-    })
-    .catch(error => {
-      Alert.alert("Signup error", error.message);
-    });
-}
+      .createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
 
+        if (user) {
+          const uid = user.uid;
+          console.log(`User UID: ${uid}`);
+
+          // Call the function to store user data after sign-up.
+          // You can pass additional data like name, imageUrl, etc.
+          writeUserData(uid, email); // Modify this with your desired data.
+
+          user.sendEmailVerification()
+            .then(() => {
+              Alert.alert("Account created", "Please verify your email.");
+            })
+            .catch(verificationError => {
+              // Handle any errors that occur during the email verification process
+              Alert.alert("Verification email send error", verificationError.message);
+            });
+        }
+      })
+      .catch(error => {
+        Alert.alert("Signup error", error.message);
+      });
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Signup</Text>
-      <TextInput 
-        value={email} 
-        onChangeText={setEmail} 
-        placeholder="Email" 
+      <TextInput
+        value={email}
+        onChangeText={setEmail}
+        placeholder="Email"
         style={styles.input}
-        autoCapitalize="none" 
+        autoCapitalize="none"
       />
-      <TextInput 
-        value={password} 
-        onChangeText={setPassword} 
-        placeholder="Password" 
-        secureTextEntry 
-        style={styles.input} 
+      <TextInput
+        value={password}
+        onChangeText={setPassword}
+        placeholder="Password"
+        secureTextEntry
+        style={styles.input}
       />
       <Button title="Signup" onPress={handleSignUp} />
     </View>

@@ -1,37 +1,54 @@
-import { StyleSheet, Text, View, Button } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react';
+import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
+import {writeUserContacts} from '../firebase';
 
-const CallsScreen = () => {
+const CallScreen = ({ uid }) => {
+  const [contactName, setContactName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  const handleAddContact = () => {
+    writeUserContacts(uid, contactName, phoneNumber);
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.privacyButton}>
-        <Button style={styles.edit} title="Edit" color="tomato" />
-      </View>
-      <View style={styles.header}>
-        <Text style={styles.call}>Calls</Text>
-      </View>
+      <Text style={styles.title}>Add Contact</Text>
+      <TextInput
+        placeholder="Contact Name"
+        value={contactName}
+        onChangeText={setContactName}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Phone Number"
+        value={phoneNumber}
+        onChangeText={setPhoneNumber}
+        style={styles.input}
+      />
+      <Button title="Add Contact" onPress={handleAddContact} />
     </View>
-  )
-}
-
-export default CallsScreen
+  );
+};
 
 const styles = StyleSheet.create({
-  header: {
-    paddingTop: 100,
-    paddingHorizontal: 20,
-    fontSize: 50,
+  container: {
+    flex: 1,
+    justifyContent: 'center', // Center vertically
+    alignItems: 'center', // Center horizontally
   },
-  privacyButton: {
-    position: 'absolute',
-    paddingTop: 50,
-    paddingHorizontal: 15
+  title: {
+    fontSize: 24,
+    marginBottom: 16,
+    textAlign: 'center',
   },
-  privacy: {
-    fontSize: 20
+  input: {
+    height: 40,
+    width: '80%', // Adjust the width as needed
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingHorizontal: 8,
   },
-  call: {
-    fontSize: 50,
-    color: "black"
-  }
-})
+});
+
+export default CallScreen;

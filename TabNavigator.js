@@ -1,48 +1,3 @@
-// import React from 'react';
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import Icon from 'react-native-vector-icons/Ionicons';
-// import HomeScreen from './screens/HomeScreen';
-// import SettingScreen from './screens/SettingScreen';
-// import Ionicons from "react-native-vector-icons/Ionicons";
-// const Tab = createBottomTabNavigator();
-
-// const TabNavigator = () => {
-//   return (
-//     <Tab.Navigator
-
-//       screenOptions={({ route }) => ({
-//         tabBarIcon: ({ focused, color, size }) => {
-//           let iconName;
-
-//           if (route.name === 'Home') {
-//             iconName = focused ? 'home' : 'home-outline';
-//           } else if (route.name === 'Settings') {
-//             iconName = focused ? 'settings' : 'settings-outline';
-//           }
-//           return <Icon name={iconName} size={size} color={color} />;
-//         },
-//         tabBarActiveTintColor: "blue",
-//         tabBarInactiveTintColor: "gray",
-//         tabBarStyle: [
-//           {
-//             display: "flex"
-//           },
-//           null
-//         ]
-//       })}
-//       tabBarOptions={{
-//         activeTintColor: 'blue',
-//         inactiveTintColor: 'gray',
-//       }}
-//     >
-//       <Tab.Screen name="Home" component={HomeScreen} />
-//       <Tab.Screen name="Settings" component={SettingScreen} />
-//     </Tab.Navigator>
-//   );
-// }
-
-// export default TabNavigator;
-
 import { StyleSheet } from "react-native";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -54,7 +9,9 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 const Tab = createBottomTabNavigator();
 
-const TabNavigator = () => {
+const TabNavigator = ({ route }) => {
+  const { uid } = route.params;
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -78,7 +35,9 @@ const TabNavigator = () => {
       })}
     >
       <Tab.Screen name="Status" component={StatusScreen} />
-      <Tab.Screen name="Calls" component={CallsScreen} />
+      <Tab.Screen name="Calls">
+        {() => <CallsScreen uid={uid} />}
+      </Tab.Screen>
       <Tab.Screen name="Camera" component={CamScreen} />
       <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>

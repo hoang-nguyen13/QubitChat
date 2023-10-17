@@ -1,5 +1,6 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
+import 'firebase/compat/database';
 
 
 const firebaseConfig = {
@@ -9,8 +10,38 @@ const firebaseConfig = {
   storageBucket: "qubit-65f65.appspot.com",
   messagingSenderId: "1065876130644",
   appId: "1:1065876130644:web:d16143bbd785729cc156c1",
-  measurementId: "G-W2WZ7SQJTC"
+  measurementId: "G-W2WZ7SQJTC",
+  databaseURL: "https://qubit-65f65-default-rtdb.firebaseio.com/"
 };
+
+export function writeUserData(userId, email) {
+  // Reference to the database.
+  const database = firebase.database();
+  const usersRef = database.ref('users');
+
+  // Set the user data using their UID as the key.
+  usersRef.child(userId).set({
+    userId: userId,
+    email: email
+  });
+}
+
+export function writeUserContacts(userId, contactName, phoneNumber) {
+  const database = firebase.database();
+  const userContactsRef = database.ref(`contacts/${userId}`);
+  
+  // Generate a unique key for the new contact
+  const newContactKey = userContactsRef.push().key;
+
+  // Data to store for the contact
+  const contactData = {
+    contactName: contactName,
+    phoneNumber: phoneNumber,
+  };
+
+  // Set the contact data under the unique key
+  userContactsRef.child(newContactKey).set(contactData);
+}
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
@@ -18,5 +49,5 @@ firebase.initializeApp(firebaseConfig);
 
 // Initialize Firebase Authentication and get a reference to the service
 const auth = firebase.auth();
-
-export { auth };
+const database = firebase.database();
+export { auth, database };

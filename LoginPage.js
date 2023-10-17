@@ -2,21 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import firebase from 'firebase/compat';
 import * as AuthSession from 'expo-auth-session';
-import { useAuthRequest, ResponseType } from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
+import { useAuthRequest, ResponseType } from 'expo-auth-session';
 
 WebBrowser.maybeCompleteAuthSession();
 
 const LoginPage = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [userUid, setUserUid] = useState(null); // State to capture the user's uid
 
     const handleLogin = () => {
         firebase.auth().signInWithEmailAndPassword(email, password)
             .then((userCredential) => {
                 var user = userCredential.user;
                 if (user) {
-                    navigation.navigate('HomeScreen');
+                    setUserUid(user.uid);
+                    navigation.navigate('HomeScreen', { uid: userUid });
                 } else {
                     Alert.alert("Login Error", "Invalid user data received. Please try again.");
                 }
